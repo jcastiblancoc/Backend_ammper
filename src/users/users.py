@@ -2,12 +2,14 @@ from fastapi import APIRouter, HTTPException, Request, Depends, Form
 from connection import session
 from models import User
 from security import hash_password, get_user, create_access_token, verify_password, get_current_user
+from fastapi.responses import RedirectResponse
+
 
 router = APIRouter()
 
 @router.get("/")
 async def get_users():
-    return {"message": "List of users"}
+    return RedirectResponse(url="/login")
 
 
 @router.post("/register")
@@ -17,7 +19,7 @@ async def create_user(request: Request):
     if not all(key in user_data for key in ["first_name", "last_name", "email", "phone", "password"]):
         raise HTTPException(status_code=400, detail="Faltan campos requeridos")
 
-    if session.query(User).filter(User.email == user_data["email"]).first():
+    if get_user(user_data["email"]):
         raise HTTPException(status_code=400, detail="El usuario ya existe")
 
     new_user = User(
@@ -36,7 +38,7 @@ async def create_user(request: Request):
 
 @router.post("/login/")
 async def login(email: str = Form(...), password: str = Form(...)):
-    user = session.query(User).filter(User.email == email).first()
+    user = get_user(email)
 
     if user is None or not verify_password(password, user.password):
         raise HTTPException(status_code=401, detail="Credenciales incorrectas")
