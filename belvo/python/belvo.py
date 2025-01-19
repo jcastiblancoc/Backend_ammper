@@ -1,6 +1,6 @@
 import requests
 from requests.auth import HTTPBasicAuth
-from config import API_KEY_ID, API_KEY_SECRET, BASE_URL_GET_INSTITUTIONS, BASE_URL_ACCOUNT_ID 
+from config import API_KEY_ID, API_KEY_SECRET, BASE_URL_GET_INSTITUTIONS, BASE_URL_ACCOUNT_ID
 from fastapi import HTTPException
 
 
@@ -35,8 +35,6 @@ def get_bank_list():
         return {"error": "exception", "message": str(e)}
 
 def get_balance(link_id):
-    
-    
     ingresos = 0
     egresos = 0
 
@@ -51,7 +49,7 @@ def get_balance(link_id):
             raise HTTPException(status_code=response.status_code, detail=response.text)
 
         data = response.json()
-        
+
         if not data.get("results"):
             if data.get("next") is None:
                 return {
@@ -67,7 +65,7 @@ def get_balance(link_id):
         egresos += sum(t["amount"] for t in data["results"] if t["type"] == "OUTFLOW")
 
         next_url = data.get("next")
-        
+
     balance = ingresos - egresos
 
     return {
