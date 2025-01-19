@@ -7,7 +7,7 @@ app = FastAPI(title="PWA Ammper Test")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://peppy-cendol-150567.netlify.app/"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
