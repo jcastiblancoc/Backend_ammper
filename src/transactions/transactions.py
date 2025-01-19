@@ -7,14 +7,15 @@ router = APIRouter()
 
 @router.get("/banks")
 async def get_banks():
-    data = get_bank_list()
+    data = await get_bank_list()
     return data
 
 
 @router.get("/banks/{link_id}/balance")
 async def get_balance_and_transactions(link_id: str):
     try:
-        return get_balance(link_id)
+        data = await get_balance(link_id)
+        return data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
